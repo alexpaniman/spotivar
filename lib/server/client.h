@@ -9,82 +9,66 @@
 namespace net
 {
     template <typename T>
-    class client_interface
-    {
+    class client_interface {
+ 
     public:
-        client_interface() : socket(context)
-        {
+        client_interface() : socket(context){
             //init the socket with context, let asio to perform something
         };
 
-        virtual ~client_interface()
-        {
-            Disconnect();
+        virtual ~client_interface(){
+            disconnect();
         };
 
-         private:
-            ts_queue<owned_message<T>> qMessagesIn;
+            //transfer the exception on a higher level
+        bool connect(const std::string& host, const uint16_t port){
+            boost::asio::ip::tcp::resolver resolver(context);
+            boost::asio::ip::tcp::resolver::results_type endpoint = resolver.resolve(host, std::to_string(port));
 
-        protected:
-            boost::asio::io_context context;
-            std::thread ThrContext;  //thread is needed for asio to perform its tasks
-           
-            boost::asio::ip::tcp::socket   socket;
-            std::unique_ptr<connection<T>> ToServerConn;
+            to_server_conn = std::make_unique<net::connection<T>>(
+                net::connection<T>::owner::client,
+                context,
+                boost::asio::ip::tcp::socket(context), deq_messages_in);
 
+            to_server_conn->connect_to_server(endpoint);
+            thr_context = std::thread([this]() { context.run(); });
+            
+            return true;
+        }
 
-        public:
-            bool Connect(const std::string& host, const uint16_t port)
-            {
-                try
-                {
-                    boost::asio::ip::tcp::resolver resolver(context);
-                    boost::asio::ip::tcp::resolver::results_type endpoint = resolver.resolve(host, std::to_string(port));
-
-                    ToServerConn = std::make_unique<net::connection<T>>(
-                        net::connection<T>::owner::client,
-                        context,
-                        boost::asio::ip::tcp::socket(context), qMessagesIn);
-
-                    ToServerConn->ConnectToServer(endpoint);
-
-                    ThrContext = std::thread([this]() { context.run(); });
-                }
-                catch(const std::exception& e)
-                {
-                    std::cerr << "Client Exception" << e.what() << '\n';
-                    return false;
-                }
-                
-                return false;
+        void disconnect(){
+            if (is_connected()){
+                to_server_conn->disconnect();
             }
+            
+            context.stop();
 
-            void Disconnect()
-            {
-                if (IsConnected())
-                {
-                    ToServerConn->Disconnect();
-                }
-                
-                context.stop();
+            if (thr_context.joinable())
+                thr_context.join();
 
-                if (ThrContext.joinable())
-                    ThrContext.join();
+            to_server_conn.release();
+        };
 
-                ToServerConn.release();
-            };
+        bool is_connected(){
+            if (to_server_conn)
+                return to_server_conn->is_connected();
+            else 
+                return false;
+        };
 
-            bool IsConnected()
-            {
-                if (ToServerConn)
-                    return ToServerConn->IsConnected();
-                else 
-                    return false;
-            };
+        ts_queue<owned_message<T>>& incoming (){
+            return deq_messages_in;
+        };
 
-            ts_queue<owned_message<T>>& Incoming ()
-            {
-                return qMessagesIn;
-            };
+    protected:
+        boost::asio::io_context context;
+        std::thread             thr_context;  //thread is needed for asio to perform its tasks
+        
+        boost::asio::ip::tcp::socket   socket;
+        std::unique_ptr<connection<T>> to_server_conn;
+
+    private:
+        ts_queue<owned_message<T>> deq_messages_in;
+
     };
 }
