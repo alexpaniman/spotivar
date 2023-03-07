@@ -12,165 +12,124 @@ namespace net
     class server_interface
     {
     public:
-        server_interface(uint16_t port)
-             : AsioAcceptor(Context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
-        {
-
+        server_interface(uint16_t port) // add start in the server constructor, so when it inited - server starts
+             : asio_acceptor(context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)){
         };
 
-        virtual ~server_interface()
-        {
-            Finish();
+        virtual ~server_interface(){
+            finish();
         };
 
-        bool Start()  
-        {
-            try
-            {
-                WaitForClientConnection();
+        //move catch exception on a higher level
+        bool start(){
+            wait_for_client_connection();
 
-                ThreadContext = std::thread([this]() { Context.run(); });
-            }
-            catch(const std::exception& e)
-            {
-                std::cerr << "[SERVER] Exception " << e.what() << '\n';
-                return false;
-            }
-
+            thread_context = std::thread([this]() { context.run(); });
             std::cout << "[SERVER] started\n";
+
             return true;
-            
         };
          
-        bool Finish()
-        {
-            Context.stop();
+        bool finish(){
+            context.stop();
 
-            if (ThreadContext.joinable())
-                ThreadContext.join();
+            if (thread_context.joinable())
+                thread_context.join();
 
             std::cout << "[SERVER] Stopped!\n";
 
             return true;
         };
 
-        void WaitForClientConnection ()
-        {
-            AsioAcceptor.async_accept(
-                [this](std::error_code error, boost::asio::ip::tcp::socket socket)
-                {
-                    if (!error)
-                    {
-                        std::cout << "New connect " << socket.remote_endpoint() << "\n"; //this method return ip of connection
+        void wait_for_client_connection(){
+            asio_acceptor.async_accept(
+                [this](boost::asio::ip::tcp::socket socket){
+                        std::cout << "New Connect " << socket.remote_endpoint() << "\n"; //this method return ip of connection
 
                         std::shared_ptr<connection<T>> new_connection =  //create new object - new connection
-                             std::make_shared<connection<T>>(connection<T>::owner::server, Context, std::move(socket), qMessageIn);
+                                std::make_shared<connection<T>>(connection<T>::owner::server, context, std::move(socket), deq_message_in);
 
-                        if(OnClientConnect(new_connection))
-                        {
-                            deqConnections.push_back(std::move(new_connection));
-                            deqConnections.back()->ConnectToClient(ID_counter ++); // here i start readheaders
+                        if(on_client_connect(new_connection)){
+                            deq_connections.push_back(std::move(new_connection));
+                            deq_connections.back()->connect_to_client(id_counter ++); // here i start readheaders
 
-                            std::cout << "[" << deqConnections.back()->GetID() << "] Connection Approved\n";
+                            std::cout << "[" << deq_connections.back()->get_id() << "] Connection Approved\n";
 
                         } //establish connection
                         else
                             std::cout << "Connection Denied\n";
- 
                     }
-                    else
-                        std::cout << "[SERVER] Error while accept\n";
 
                     //anyway, start to try again connect new user
-                    WaitForClientConnection();
-                }
-            );
-        };
-
-        void MessageClient (std::shared_ptr<connection<T>> client, const message<T>& msg)
-        {
-            if (client && client->IsConnected())
-            {
-                client->Send(msg);
+                    wait_for_client_connection();
+            );};
+            
+        void message_client(std::shared_ptr<connection<T>> client, const message<T>& msg){
+            if (client && client->is_connected()){
+                client->send(msg);
             }
-            else
-            {
-                OnClientDisconnect(client);
+            else {
+                on_client_disconnect(client);
                 client.reset();
 
-                deqConnections.erase(std::remove(deqConnections.begin(), deqConnections.end(), client), deqConnections.end());
-
+                deq_connections.erase(std::remove(deq_connections.begin(), deq_connections.end(), client), deq_connections.end());
             }
-
         };
 
-        void MessageAllClients (const message<T>& msg, std::shared_ptr<connection<T>> pIgnor = nullptr)
-        {
-            bool InvalidClientExists = false;
+        void message_all_clients(const message<T>& msg, std::shared_ptr<connection<T>> ignor_client = nullptr){
+            bool invalid_client_exists = false;
 
-            for (auto& client : deqConnections)
-            {
-                if (client && client->IsConnected())
-                {
-                    if (client != pIgnor)
-                        client->Send(msg);
+            for (auto& client : deq_connections){
+                if (client && client->is_connected()){
+                    if (client != ignor_client)
+                        client->send(msg);
                 }
-                else
-                {
-                    OnClientDisconnect(client);
+                else {
+                    on_client_disconnect(client);
                     client.reset();
-                    InvalidClientExists = true;
+                    invalid_client_exists = true;
                 }
             }
 
-            if (InvalidClientExists)
-                deqConnections.erase(std::remove(deqConnections.begin(), deqConnections.end(), nullptr), deqConnections.end());
+            if (invalid_client_exists)
+                deq_connections.erase(std::remove(deq_connections.begin(), deq_connections.end(), nullptr), deq_connections.end());
 
         };
 
-        void Update(size_t nMaxMessage = -1)
-        {
-            size_t nMessageCount = 0;
-            while (nMessageCount < nMaxMessage && !qMessageIn.empty())
-            {
-                auto msg = qMessageIn.pop_front();
+        void update(size_t max_messages = -1){
+            size_t message_count = 0;
 
-                OnMessage(msg.remote, msg.msg);
+            while (message_count < max_messages && !deq_message_in.empty()) {
+                auto msg = deq_message_in.pop_front();
+                on_message(msg.remote, msg.msg);
 
-                nMessageCount ++;
+                message_count ++;
             }
-        }
+        };
 
     protected:
+        ts_queue<owned_message<T>> deq_message_in;
+        std::deque<std::shared_ptr<connection<T>>> deq_connections;
+
+        boost::asio::io_context context;
+        std::thread             thread_context;
+  
+        boost::asio::ip::tcp::acceptor asio_acceptor; //this class will get users sockets
+
+        uint32_t id_counter = 10000;
 
         //checker that will deside weather to connect user or not 
-        virtual bool OnClientConnect(std::shared_ptr<connection<T>> client)
-        {
+        virtual bool on_client_connect(std::shared_ptr<connection<T>> client){
             return false;
         };
 
         //called when client disconnect, this thing will detect did anyone disconnect
-        virtual bool OnClientDisconnect(std::shared_ptr<connection<T>> client)
-        {
+        virtual bool on_client_disconnect(std::shared_ptr<connection<T>> client){
             return false;
         };
 
-        virtual bool OnMessage(std::shared_ptr<connection<T>> client, message<T>& msg)
-        {
+        virtual bool on_message(std::shared_ptr<connection<T>> client, message<T>& msg){
             return false;
         };
-    
-    protected:
-        ts_queue<owned_message<T>> qMessageIn;
-        std::deque<std::shared_ptr<connection<T>>> deqConnections;
-
-        boost::asio::io_context Context;
-        std::thread ThreadContext;
-  
-        boost::asio::ip::tcp::acceptor AsioAcceptor; //this class will get users sockets
-
-        uint32_t ID_counter = 10000;
-
     };
-
-}
+};
