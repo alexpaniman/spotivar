@@ -30,7 +30,7 @@ namespace net
             std::thread ThrContext;  //thread is needed for asio to perform its tasks
            
             boost::asio::ip::tcp::socket   socket;
-            std::unique_ptr<connection<T>> connection;
+            std::unique_ptr<connection<T>> ToServerConn;
 
 
         public:
@@ -41,12 +41,12 @@ namespace net
                     boost::asio::ip::tcp::resolver resolver(context);
                     boost::asio::ip::tcp::resolver::results_type endpoint = resolver.resolve(host, std::to_string(port));
 
-                    connection = std::make_unique<net::connection<T>>(
+                    ToServerConn = std::make_unique<net::connection<T>>(
                         net::connection<T>::owner::client,
                         context,
                         boost::asio::ip::tcp::socket(context), qMessagesIn);
 
-                    connection->ConnectToServer(endpoint);
+                    ToServerConn->ConnectToServer(endpoint);
 
                     ThrContext = std::thread([this]() { context.run(); });
                 }
@@ -63,7 +63,7 @@ namespace net
             {
                 if (IsConnected())
                 {
-                    connection->Disconnect();
+                    ToServerConn->Disconnect();
                 }
                 
                 context.stop();
@@ -71,13 +71,13 @@ namespace net
                 if (ThrContext.joinable())
                     ThrContext.join();
 
-                connection.release();
+                ToServerConn.release();
             };
 
             bool IsConnected()
             {
-                if (connection)
-                    return connection->IsConnected();
+                if (ToServerConn)
+                    return ToServerConn->IsConnected();
                 else 
                     return false;
             };
