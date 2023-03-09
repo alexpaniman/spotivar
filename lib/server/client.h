@@ -34,7 +34,7 @@ namespace net
             thr_context = std::thread([this]() { context.run(); });
             
             return true;
-        }
+        };
 
         void disconnect(){
             if (is_connected()){

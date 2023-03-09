@@ -9,8 +9,8 @@
 namespace net
 {
     template<typename T>
-    class server_interface
-    {
+    class server_interface{
+
     public:
         server_interface(uint16_t port) // add start in the server constructor, so when it inited - server starts
              : asio_acceptor(context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)){
@@ -43,7 +43,7 @@ namespace net
 
         void wait_for_client_connection(){
             asio_acceptor.async_accept(
-                [this](boost::asio::ip::tcp::socket socket){
+                [this](std::error_code error, boost::asio::ip::tcp::socket socket){ //does not work, without "error" variable??
                         std::cout << "New Connect " << socket.remote_endpoint() << "\n"; //this method return ip of connection
 
                         std::shared_ptr<connection<T>> new_connection =  //create new object - new connection
@@ -54,15 +54,15 @@ namespace net
                             deq_connections.back()->connect_to_client(id_counter ++); // here i start readheaders
 
                             std::cout << "[" << deq_connections.back()->get_id() << "] Connection Approved\n";
-
                         } //establish connection
                         else
                             std::cout << "Connection Denied\n";
-                    }
 
                     //anyway, start to try again connect new user
                     wait_for_client_connection();
-            );};
+                }
+                );
+        };
             
         void message_client(std::shared_ptr<connection<T>> client, const message<T>& msg){
             if (client && client->is_connected()){
