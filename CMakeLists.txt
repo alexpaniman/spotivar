@@ -40,6 +40,8 @@ endif ()
 
 add_subdirectory(lib/server)
 add_subdirectory(lib/search)
+add_subdirectory(lib/fmt)
+add_subdirectory(lib/axp)
 
 # ==> Add project's core 
 
