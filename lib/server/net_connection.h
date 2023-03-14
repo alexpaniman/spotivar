@@ -3,7 +3,7 @@
 #include "net_message.h"
 #include "thread_safe_queues.h"
 
-namespace net
+namespace sptv
 {
     template <typename T>
     class connection: public std::enable_shared_from_this<connection<T>> {
@@ -174,7 +174,7 @@ namespace net
 
 
         boost::asio::ip::tcp::socket m_socket;
-        boost::asio::io_context& asio_context;
+        boost::asio::io_context&     asio_context;
 
         //this queue consists only messages that are need to be sent 
         //to the remote side of connection

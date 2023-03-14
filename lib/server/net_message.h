@@ -5,7 +5,7 @@
 //This messages support random protocols aka msg id
 // They are easy to work with, because they support any standart data types
 
-namespace net
+namespace sptv
 {
     template <typename T>
     struct message_header
@@ -33,8 +33,7 @@ namespace net
 
         //this will help me to easily push any standart data in my message
         template <typename DataType>
-        friend message<T>& operator << (message<T>& msg, const DataType& data)
-        {
+        friend message<T>& operator << (message<T>& msg, const DataType& data){
             static_assert(std::is_standard_layout<DataType>::value, "Data is too complex to be pushed");
 
             size_t i = msg.body.size(); //storing current size of a data
@@ -49,8 +48,30 @@ namespace net
         }
 
         template <typename DataType>
-        friend message<T>& operator >> (message<T>& msg, DataType& data)
-        {
+        friend message<T>& operator << (message<T>& msg, const std::vector<DataType> buffer){
+            size_t i = msg.body.size();
+
+            msg.body.resize(i + buffer.size()*sizeof(DataType));
+            std::memcpy (msg.body.data() + i, buffer.data(), sizeof(DataType)*buffer.size());
+
+            msg.header.size = msg.size();
+
+            return msg;
+        }
+
+        friend message<T>& operator << (message<T>& msg, const std::string string){
+            size_t i = msg.body.size();
+
+            msg.body.resize(i + string.size() + 1);
+            std::memcpy (msg.body.data() + i, string.data(), string.size() + 1);
+
+            msg.header.size = msg.size();
+
+            return msg;
+        }
+
+        template <typename DataType>
+        friend message<T>& operator >> (message<T>& msg, DataType& data){
             static_assert(std::is_standard_layout<DataType>::value, "Data can not be popped, its too complex");
 
             size_t i = msg.body.size() - sizeof(DataType);
@@ -80,8 +101,6 @@ namespace net
             os << msg.msg;
             return msg;
         }
-
-
     };
 }
 

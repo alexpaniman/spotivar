@@ -1,7 +1,7 @@
 #pragma once
 #include "common_include.h"
 
-namespace net
+namespace sptv
 {
     template<typename T>
     class ts_queue
