@@ -42,6 +42,7 @@ add_subdirectory(lib/server)
 add_subdirectory(lib/search)
 add_subdirectory(lib/fmt)
 add_subdirectory(lib/axp)
+add_subdirectory(lib/sha256)
 
 # ==> Add project's core 
 
