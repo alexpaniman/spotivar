@@ -43,8 +43,7 @@ add_subdirectory(lib/search)
 add_subdirectory(lib/fmt)
 add_subdirectory(lib/axp)
 add_subdirectory(lib/flac_reader)
-
-#add_subdirectory(lib/sha256) the <byteswap.h> should be changed
+add_subdirectory(lib/sha256)
 
 # ==> Add project's core 
 
