@@ -21,14 +21,14 @@ sudo pacman -Sy cmake clang
 
 And for **Ubuntu:** 
 ```sh
-sudo apt-get install -y cmake clang
+sudo apt-get install -y cmake clang ninja-build
 ```
 
 Then, you need to install 3 libraries this project heavily depends on: `Boost`, `Flac` and `Ogg`. You can build all of them from source (it's what I would definitely recommend for the latter two, as their distribution from package manager usually doesn't include files necessary for `CMake` to find them). `Boost`, at the same time, can be usually installed with a package manager perfectly fine:
 
 For example, on **Arch Linux:**
 ```sh
-sudo pacman -Sy boost boost-libs
+sudo pacman -Sy boost boost-libs ninja
 ```
 
 On **Ubuntu:**
