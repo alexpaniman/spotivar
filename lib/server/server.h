@@ -143,22 +143,27 @@ namespace sptv
                 // printf ("old path: %s\n", entry.path().c_str());
                 // printf ("new path: %s\n", new_path.c_str());
 
-                int error = rename(entry.path().c_str(), new_path.c_str());
-                if (error)
-                    perror("rename crashed: ");
+                std::filesystem::path old_path;
+                std::filesystem::path filesystem_new_path(new_path);
+
+                old_path = entry.path();
+
+                //before push, understand why i need to skip existinf files?
+                //becouse when i test it, invisible file might stay still after deleting, so i try to copy in existing
+                //inviz file ((( 
+                std::filesystem::copy(old_path, filesystem_new_path, std::filesystem::copy_options::skip_existing);
+                std::filesystem::remove(old_path);
 
                 my_hash++;
             }
         };
 
-        void update(size_t max_messages = -1){
-            size_t message_count = 0;
+        void update(){
+            deq_message_in.wait(); // this lock is used to prevent useless while looping
 
-            while (message_count < max_messages && !deq_message_in.empty()) {
+            while (!deq_message_in.empty()) { //tacking all messages from the deq
                 auto msg = deq_message_in.pop_front();
                 on_message(msg.remote, msg.msg);
-
-                message_count ++;
             }
         };
 

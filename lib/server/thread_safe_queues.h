@@ -28,12 +28,18 @@ namespace sptv
         {
             std::scoped_lock lock(mxQueue);
             deqQueue.emplace_back(std::move(item)); //deep copy of an elem
+
+            std::unique_lock<std::mutex> ul(mtx_update);
+            cv_blocking.notify_one();
         };
 
         void push_front(const T& item)
         {
             std::scoped_lock lock(mxQueue);
             deqQueue.emplace_front(std::move(item));
+
+            std::unique_lock<std::mutex> ul(mtx_update);
+            cv_blocking.notify_one();
         }; 
 
         bool empty()
@@ -74,10 +80,20 @@ namespace sptv
              return elem;
         }
 
+        void wait(){
+            while (empty()){
+                std::unique_lock<std::mutex> ul(mtx_update);
+                cv_blocking.wait(ul);
+            }
+        }
+
 
          
         protected:
         std::mutex mxQueue;
         std::deque<T> deqQueue;
+
+        std::condition_variable cv_blocking;
+        std::mutex mtx_update;
     };
 }
