@@ -17,6 +17,19 @@ namespace sptv
         connection(owner parent, boost::asio::io_context& io_context, boost::asio::ip::tcp::socket socket, ts_queue<owned_message<T>>& q_in)
                 : asio_context(io_context), m_socket(std::move(socket)), deq_messages_in (q_in){
                 owner_type = parent;
+
+            if (owner_type == owner::server){
+                //aka generating random data to send to client on validation
+                validation_out = uint64_t(std::chrono::system_clock::now().time_since_epoch().count());
+
+                //then it will be compared
+                validation_check = encrypte_data(validation_out); 
+            }
+            else {
+                //waiting for server getting a validation handshake
+                validation_in  = 0;
+                validation_out = 0;
+            } 
         }; //constructor
 
         virtual ~connection(){}; //destructor
@@ -26,11 +39,12 @@ namespace sptv
         };
     
         void connect_to_client(uint32_t uid = 0) {
-
             if (owner_type == owner::server) {
                 if (m_socket.is_open()) {
                     id = uid;
-                    read_header();
+                    
+                    write_validation();
+                    read_validation ();
                 }
             }
         };
@@ -39,8 +53,8 @@ namespace sptv
             if (owner_type == owner::client) {
                 boost::asio::async_connect(m_socket, endpoints,
                     [this](std::error_code ec, boost::asio::ip::tcp::endpoint endpoint){
-                    //if exeption, catch at level higher
-                    read_header();
+                    //now we expect validation message first
+                    read_validation();
             });
             }
         };
@@ -159,6 +173,52 @@ namespace sptv
                 }
             });
         };
+
+        void write_validation(){
+            boost::asio::async_write(m_socket, boost::asio::buffer(&validation_out, sizeof(uint64_t)),
+            [this](std::error_code ec, std::size_t length){
+                if (!ec) {
+                    if (owner_type == owner::client)
+                        read_header (); //when client successfuly send validation message,
+                                        // it waits for incomming messages
+                }
+                else {
+                    m_socket.close(); //just shout down the connection
+                }
+                
+            });
+        };
+
+        void read_validation(/*class sptv::spotivar_server* server = nullptr*/){
+            boost::asio::async_read(m_socket, boost::asio::buffer(&validation_in, sizeof(uint64_t)),
+            [this](std::error_code ec, std::size_t length){
+                if (!ec) {
+                    if (owner_type == owner::server) {
+                        if (validation_in == validation_check)
+                        {
+                            std::cout << "Client Validated\n";
+                            //server->on_client_validated(this->shared_from_this());
+
+                            read_header();
+                        }
+                        else
+                        {
+                            std::cout << "Client FAILED Validation\n";
+                            m_socket.close();
+                        }
+                        
+                    }
+                    else {
+                        validation_out = encrypte_data(validation_in);
+                        write_validation();
+                    }
+                }
+                else {
+                    std::cout << "Read Validation failed, closing connection ...\n";
+                    m_socket.close();
+                }
+            });
+        }
     
 
         void add_to_incomming_queue() {
@@ -171,6 +231,13 @@ namespace sptv
 
             read_header();
         };
+
+        uint64_t encrypte_data(uint64_t input){
+            //come up with a realy great function for validation
+            uint64_t result = input + 1;
+
+            return result;
+        }
 
 
         boost::asio::ip::tcp::socket m_socket;
@@ -188,6 +255,11 @@ namespace sptv
 
         owner owner_type = owner::server;
         uint32_t id = 0;
+
+        //validation
+        uint64_t validation_out   = 0;
+        uint64_t validation_in    = 0;
+        uint64_t validation_check = 0;
 
     };
 }

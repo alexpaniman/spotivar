@@ -48,7 +48,7 @@ namespace sptv
 
                         if(on_client_connect(new_connection)){
                             deq_connections.push_back(std::move(new_connection));
-                            deq_connections.back()->connect_to_client(id_counter ++); // here i start readheaders
+                            deq_connections.back()->connect_to_client(id_counter++); // here i start readheaders
 
                             std::cout << "[" << deq_connections.back()->get_id() << "] Connection Approved\n";
                         } //establish connection
@@ -316,6 +316,11 @@ namespace sptv
 
             return true;
         };
+
+        void on_client_validated(std::shared_ptr<connection<msg_type>> client){
+
+
+        }
 
         size_t get_file_size (FILE* file){
             assert (file != NULL);
