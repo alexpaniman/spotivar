@@ -1,3 +1,6 @@
 [submodule "lib/fmt"]
 	path = lib/fmt
 	url = https://github.com/fmtlib/fmt
+[submodule "lib/axp"]
+	path = lib/axp
+	url = git@github.com:alexpaniman/axp.git
