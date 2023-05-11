@@ -24,16 +24,16 @@ And for **Ubuntu:**
 sudo apt-get install -y cmake clang ninja-build
 ```
 
-Then, you need to install 3 libraries this project heavily depends on: `Boost`, `Flac` and `Ogg`. You can build all of them from source (it's what I would definitely recommend for the latter two, as their distribution from package manager usually doesn't include files necessary for `CMake` to find them). `Boost`, at the same time, can be usually installed with a package manager perfectly fine:
+Then, you need to install 4 libraries this project heavily depends on: `GTKmm3.0`, `Boost`, `Flac` and `Ogg`. You can build all of them from source (it's what I would definitely recommend for the latter two, as their distribution from package manager usually doesn't include files necessary for `CMake` to find them). `Boost`, at the same time, can be usually installed with a package manager perfectly fine:
 
 For example, on **Arch Linux:**
 ```sh
-sudo pacman -Sy boost boost-libs ninja
+sudo pacman -Sy boost boost-libs ninja gtkmm3
 ```
 
 On **Ubuntu:**
 ```sh
-sudo apt-get install -y libboost-all-dev
+sudo apt-get install -y libboost-all-dev libgtkmm-3.0-dev
 ```
 
 Building `Ogg` and `Flac` is from source is also quite simple: select directory where you want to install them and `cd` there, this directory can be anywhere on your system, for example, in `/opt/` (beware this directory is usually owned by `root`, you will need to clone with `sudo` and then change owner of the cloned repository to your user with: `sudo chown -R <your-user-name>:<your-usuall-group-usually-has-same-name-as-user> <dir>`).
