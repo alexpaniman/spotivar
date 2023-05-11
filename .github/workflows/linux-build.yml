@@ -24,7 +24,7 @@ jobs:
     - name: Install Boost
       run: sudo apt-get install -y libboost-all-dev
 
-    - name: Install Gtkmm-4.0
+    - name: Install Gtkmm-3.0
       run: sudo apt-get install -y libgtkmm-3.0-dev
 
     - name: Install Ogg
