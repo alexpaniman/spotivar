@@ -44,6 +44,7 @@ add_subdirectory(lib/fmt)
 add_subdirectory(lib/axp)
 add_subdirectory(lib/flac_reader)
 add_subdirectory(lib/sha256)
+add_subdirectory(lib/ui)
 
 # ==> Add project's core 
 

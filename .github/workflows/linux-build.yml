@@ -24,6 +24,9 @@ jobs:
     - name: Install Boost
       run: sudo apt-get install -y libboost-all-dev
 
+    - name: Install Gtkmm-4.0
+      run: sudo apt-get install -y libgtkmm-3.0-dev
+
     - name: Install Ogg
       working-directory: ${{github.workspace}}/lib
       run: git clone https://github.com/xiph/ogg.git  && cmake -B  ogg/build  ogg                        && sudo cmake --build  ogg/build --target install
