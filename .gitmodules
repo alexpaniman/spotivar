@@ -4,6 +4,9 @@
 [submodule "lib/axp"]
 	path = lib/axp
 	url = git@github.com:alexpaniman/axp.git
-[submodule "lib/mp3_data_reader"]
-	path = lib/mp3_data_reader
-	url = https://github.com/tsatsulya/mp3_data_reader
+[submodule "lib/audio_data_decoder"]
+	path = lib/audio_data_decoder
+	url = https://github.com/tsatsulya/audio_data_decoder
+[submodule "lib/dummy_scaner"]
+	path = lib/dummy_scaner
+	url = https://github.com/tsatsulya/dummy_scaner
