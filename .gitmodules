@@ -7,6 +7,3 @@
 [submodule "lib/audio_data_decoder"]
 	path = lib/audio_data_decoder
 	url = https://github.com/tsatsulya/audio_data_decoder
-[submodule "lib/dummy_scaner"]
-	path = lib/dummy_scaner
-	url = https://github.com/tsatsulya/dummy_scaner
