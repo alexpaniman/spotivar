@@ -6,4 +6,4 @@
 	url = git@github.com:alexpaniman/axp.git
 [submodule "lib/audio_data_decoder"]
 	path = lib/audio_data_decoder
-	url = git@github.com:tsatsulya/audio_data_decoder.git
+	url = https://github.com/tsatsulya/audio_data_decoder.git
