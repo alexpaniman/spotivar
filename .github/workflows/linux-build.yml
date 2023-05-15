@@ -36,7 +36,7 @@ jobs:
       run: git clone https://github.com/xiph/flac.git && cmake -B flac/build flac -DINSTALL_MANPAGES=OFF && sudo cmake --build flac/build --target install
 
     - name: Install Jsoncpp
-      run: sudo apt-get -y install jsoncpp
+      run: sudo apt-get install libjsoncpp-dev
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
