@@ -28,7 +28,7 @@ jobs:
       run: sudo apt-get install -y libgtkmm-3.0-dev
 
       name: Install Jsoncpp
-      run: sudo apt-get install libjsoncpp-dev
+      run: sudo apt-get install -y libjsoncpp-dev
 
     - name: Install Ogg
       working-directory: ${{github.workspace}}/lib
