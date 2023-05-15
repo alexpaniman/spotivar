@@ -33,7 +33,7 @@ sudo pacman -Sy boost boost-libs ninja gtkmm3
 
 On **Ubuntu:**
 ```sh
-sudo apt-get install -y libboost-all-dev libgtkmm-3.0-dev
+sudo apt-get install -y libboost-all-dev libgtkmm-3.0-dev libjsoncpp-dev
 ```
 
 Building `Ogg` and `Flac` is from source is also quite simple: select directory where you want to install them and `cd` there, this directory can be anywhere on your system, for example, in `/opt/` (beware this directory is usually owned by `root`, you will need to clone with `sudo` and then change owner of the cloned repository to your user with: `sudo chown -R <your-user-name>:<your-usuall-group-usually-has-same-name-as-user> <dir>`).
