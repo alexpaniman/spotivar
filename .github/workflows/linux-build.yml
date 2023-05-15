@@ -27,7 +27,7 @@ jobs:
     - name: Install Gtkmm-3.0
       run: sudo apt-get install -y libgtkmm-3.0-dev
 
-      name: Install Jsoncpp
+    - name: Install Jsoncpp
       run: sudo apt-get install -y libjsoncpp-dev
 
     - name: Install Ogg
