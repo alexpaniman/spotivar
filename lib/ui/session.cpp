@@ -1,5 +1,6 @@
 #include "session.h"
 #include <boost/filesystem.hpp>
+#include "../audio_data_decoder/audio_data.h"	
 
 namespace fs = boost::filesystem;
 

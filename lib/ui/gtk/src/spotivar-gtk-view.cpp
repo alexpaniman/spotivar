@@ -5,6 +5,7 @@
 #include "fmt/format.h"
 #include "gtkmm/application.h"
 #include <memory>
+#include "../../search_results.h"
 
 
 namespace sptv {
@@ -40,7 +41,7 @@ namespace sptv {
         });
     }
 
-    void spotivar_gtk_view::update_entries(std::vector<std::string> entries) {
+    void spotivar_gtk_view::update_entries(search_result *entries) {
         (void) entries;
         // TODO: ...
     }

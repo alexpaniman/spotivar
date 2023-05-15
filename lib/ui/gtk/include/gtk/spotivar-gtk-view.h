@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-
+#include "../../search_results.h"
 
 namespace sptv {
     
@@ -13,7 +13,7 @@ namespace sptv {
     public:
         spotivar_gtk_view();
 
-        void update_entries(std::vector<std::string> entries) override;
+        void update_entries(search_result *entries) override;
         void update_folders(std::vector<std::string> folders) override;
 
         int run(); // start ui even loop
