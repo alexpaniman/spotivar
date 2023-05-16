@@ -44,6 +44,8 @@ add_subdirectory(lib/axp)
 add_subdirectory(lib/sha256)
 add_subdirectory(lib/audio_data_decoder)
 add_subdirectory(lib/ui)
+add_subdirectory(lib/dummy_scaner)
+
 
 # ==> Add project's core 
 

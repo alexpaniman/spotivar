@@ -1,4 +1,5 @@
 #include "spotivar-backend.h"
+#include "../dummy_scaner/user_files.h"
 
 static std::map<std::string, std::string audio::track_info::*> metadata = {
 	{"TITLE", &audio::track_info::title},
@@ -18,7 +19,7 @@ static std::map<std::string, std::string audio::track_info::*> metadata = {
 bool is_in_audio_data(audio::audio_data *track, std::string key_string) {
 	//validate!!!
 	for (const auto& data_field: metadata) {
-		if ((track->info.*metadata[data_field.first]).find(key_string) != std::string::npos)
+		if ((track->info_.*metadata[data_field.first]).find(key_string) != std::string::npos)
 			return true;
 	}
 	return false;
@@ -58,4 +59,13 @@ search_result *backend::find_tracks_by_prompt(std::string prompt) {
 	search_result* result= new search_result(by_track_metadata, by_track_tags);
 	return result;
 }
+
+directory_content_t* get_directiory_content_by_root(std::string root) {
+
+	directory dir = directory(root);
+
+
+	return &dir.content_
+}
+
 
