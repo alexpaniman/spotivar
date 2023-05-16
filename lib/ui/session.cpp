@@ -25,6 +25,14 @@ session::session() {
 
 		std::cout << "~/.config/merth not found, starting a first session";
 		boost::filesystem::create_directory(config_path);
+
+
+		std::ofstream file_json;
+		std::string session_path = config_path.string() + "first_session.json";
+
+		file_json.open(session_path);
+
+		file_json.close();
 		is_first = true;
 
 	} else {
@@ -48,18 +56,8 @@ session::session() {
 	}
 }
 
-
-void ask_name() {
-	//something...
-	
-};
-
 void ask_derictory() {};
 
 void session::start() {
-	
-	if (is_first) {
-		ask_name();
-		ask_derictory();
-	}
+
 }

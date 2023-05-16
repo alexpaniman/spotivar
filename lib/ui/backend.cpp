@@ -41,7 +41,7 @@ bool is_in_audio_tags(audio::audio_data *track, std::string key_string) {
 	return false;
 }
 
-search_result* backend::find_tracks_by_prompt(std::string prompt) {
+search_result *backend::find_tracks_by_prompt(std::string prompt) {
 	
 	tracklist_t tracklist = session_.user_.tracklist_;
 
