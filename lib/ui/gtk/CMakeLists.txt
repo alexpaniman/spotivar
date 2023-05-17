@@ -27,7 +27,7 @@ find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0 REQUIRED)
 
 target_link_directories(${PROJECT_NAME} PRIVATE ${GTKMM_LIBRARY_DIRS})
-target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} spotivar-ui fmt)
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES} spotivar-ui fmt audio-data)
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE ${GTKMM_INCLUDE_DIRS})

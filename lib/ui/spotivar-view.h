@@ -2,9 +2,9 @@
 
 #include <string>
 #include <vector>
-#include "../audio_data_decoder/audio_data.h"
-#include "search_results.h"
-#include "directories.h"
+#include "audio_data_decoder/audio_data.h"
+#include "backend/search_results.h"
+#include "directory_scaner/directories.h"
 namespace sptv {
 
     class spotivar_view {
@@ -14,5 +14,4 @@ namespace sptv {
 
         virtual ~spotivar_view() = default;
     };
-
 }

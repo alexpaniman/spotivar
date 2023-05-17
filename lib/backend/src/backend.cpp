@@ -60,12 +60,10 @@ search_result *backend::find_tracks_by_prompt(std::string prompt) {
 	return result;
 }
 
-directory_content_t* get_directiory_content_by_root(std::string root) {
+directories::directory_content_t *get_directiory_content_by_root(std::string root) {
 
-	directory dir = directory(root);
+	directories::directory *dir = new directories::directory(root);
+	directory_scaner::read_directory(root.data(), directory_scaner::LINEAR, dir);
 
-
-	return &dir.content_
+	return &dir->get_content();
 }
-
-

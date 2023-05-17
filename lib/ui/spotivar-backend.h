@@ -31,9 +31,9 @@ public:
     backend(session &current_session, sptv::spotivar_view &view):
         spotivar_backend(current_session), view_(view) {}
 
-	search_result* find_tracks_by_prompt(std::string prompt);
+	search_result *find_tracks_by_prompt(std::string prompt);
 
-	directories::directory_content_t* get_directiory_content_by_root(std::string root);
+	directories::directory_content_t *get_directiory_content_by_root(std::string root);
 
 	void on_folder_selected(std::string root) override {
 		view_.update_folders(get_directiory_content_by_root(root));

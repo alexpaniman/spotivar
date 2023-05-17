@@ -9,4 +9,3 @@ public:
 	tracklist_t by_track_metadata_;
 	tracklist_t by_track_tags_;
 };
-

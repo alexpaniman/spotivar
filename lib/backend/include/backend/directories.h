@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DIRECTORIES_H
+#define DIRECTORIES_H
 
 #include <iostream>
 #include <vector>
@@ -17,14 +18,14 @@ namespace directories {
 		types_ type_;
 	};
 
-	using directory_content_t =  std::vector<directory_content_obj *>;
+	using directory_content_t = std::vector<directory_content_obj*>;
 
 	class directory {
 	public:
 		directory() {};
 		directory(std::string path) : path_(path) {};
 
-		directory_content_t &get_content();
+		std::vector<directory_content_obj *> &get_content() {return content_;};
 
 		void print_content() {
 			for (const auto& obj: content_) 
@@ -35,3 +36,5 @@ namespace directories {
 		directory_content_t content_;
 	};
 }
+
+#endif
