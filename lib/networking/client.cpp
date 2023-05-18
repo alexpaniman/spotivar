@@ -1,5 +1,5 @@
 #include "client.h"
-#include "FLAC_track_info.h"
+#include "flac-reader/FLAC_track_info.h"
 #include "common_include.h"
 #include "axp/exceptions.h"
 #include <stdlib.h>

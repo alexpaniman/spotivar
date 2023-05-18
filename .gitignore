@@ -1,2 +1,8 @@
-.cache
-build
+# clangd language server's cache
+.cache/
+
+# any kind of build folders
+*build*/
+
+# in case someone opens project in idea
+.idea/

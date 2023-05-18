@@ -38,13 +38,21 @@ endif ()
 
 # ==> Add libraries
 
-#add_subdirectory(lib/server)
 add_subdirectory(lib/fmt)
 add_subdirectory(lib/axp)
+
 add_subdirectory(lib/sha256)
-add_subdirectory(lib/audio_data_decoder)
+
 add_subdirectory(lib/ui)
-add_subdirectory(lib/dummy_scaner)
+
+add_subdirectory(lib/jsoncpp)
+add_subdirectory(lib/audio-data-decoder)
+add_subdirectory(lib/directory-scanner)
+add_subdirectory(lib/backend)
+
+add_subdirectory(lib/flac-reader)
+add_subdirectory(lib/networking)
+
 
 
 # ==> Add project's core 

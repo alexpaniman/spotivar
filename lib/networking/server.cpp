@@ -3,6 +3,7 @@
 #include "axp/exceptions.h"
 
 
+// TODO: Why named in caps?
 bool CHECK_NOT_SYSTEM(std::string file_name) {
     if (!strcmp(file_name.c_str(), ".DS_Store"))
         return false;

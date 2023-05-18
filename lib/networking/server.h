@@ -8,7 +8,7 @@ namespace sptv {
 
 #include "connection.h"
 #include "net_message.h"
-#include "FLAC_track_info.h"
+#include "flac-reader/FLAC_track_info.h"
 #include <assert.h>
 #include <filesystem>
 #include <unordered_map>

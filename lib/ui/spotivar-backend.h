@@ -2,11 +2,14 @@
 
 #include <string>
 #include <vector>
+
 #include "spotivar-view.h"
-#include "../audio_data_decoder/audio_data.h"
-#include "session.h"
-#include "search_results.h"
-#include "directories.h"
+
+#include "audio-data-decoder/audio_data.h"
+
+#include "backend/session.h"
+#include "backend/search_results.h"
+#include "backend/directories.h"
 
 namespace sptv {
 
@@ -33,7 +36,7 @@ public:
 
 	search_result *find_tracks_by_prompt(std::string prompt);
 
-	directories::directory_content_t *get_directiory_content_by_root(std::string root);
+	directories::directory_content_obj *get_directiory_content_by_root(std::string root);
 
 	void on_folder_selected(std::string root) override {
 		view_.update_folders(get_directiory_content_by_root(root));

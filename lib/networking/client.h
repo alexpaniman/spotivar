@@ -3,7 +3,7 @@
 #include "thread_safe_queues.h"
 #include "net_message.h"
 #include "connection.h"
-#include "FLAC_track_info.h"
+#include "flac-reader/FLAC_track_info.h"
 #include "assert.h"
 
 void install_track(std::vector<uint8_t> track);

@@ -1,14 +1,11 @@
 #include "gtk/spotivar-gtk-view.h"
-#include "glibmm/refptr.h"
 #include "gtk/spotivar-glade-ui.h"
 
+// TODO: WTF dependency on backend, shouldn't be
+#include "backend/search_results.h"
+
 #include "gtkmm.h"
-#include "fmt/format.h"
-#include "gtkmm/application.h"
-#include "gtkmm/liststore.h"
-#include "gtkmm/window.h"
 #include <memory>
-#include "../../search_results.h"
 
 
 namespace sptv {
@@ -79,8 +76,8 @@ namespace sptv {
             impl_->entries->set_headers_visible(false);
             impl_->entries->append_column("Name", impl_->model.column_name);
 
-            update_entries({ "Hello", "My", "Friend" });
-            update_folders({ "My", "Friend" });
+            // update_entries({ "Hello", "My", "Friend" });
+            // update_folders({ "My", "Friend" });
         });
     }
 
@@ -96,16 +93,18 @@ namespace sptv {
         (void) entries;
     }
 
-    void spotivar_gtk_view::update_folders(std::vector<std::string> folders) {
-        impl_->folders_store_model->clear();
-        for (auto &&entry: folders) {
-            auto row = *(impl_->folders_store_model->append());
-            row[impl_->model.column_name] = entry;
-        }
 
-        (void) folders;
-        // TODO: ...
-    }
+    void spotivar_gtk_view::update_folders(directories::directory_content_obj *folders) {}
+    // void spotivar_gtk_view::update_folders(std::vector<std::string> folders) {
+    //     impl_->folders_store_model->clear();
+    //     for (auto &&entry: folders) {
+    //         auto row = *(impl_->folders_store_model->append());
+    //         row[impl_->model.column_name] = entry;
+    //     }
+
+    //     (void) folders;
+    //     // TODO: ...
+    // }
 
 
     int spotivar_gtk_view::run() {

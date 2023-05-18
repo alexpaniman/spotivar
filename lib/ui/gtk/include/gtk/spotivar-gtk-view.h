@@ -2,11 +2,12 @@
 
 #include "spotivar-view.h"
 
+#include "backend/search_results.h"
+#include "directory-scanner/directories.h"
+
 #include <memory>
 #include <string>
 #include <vector>
-#include "backend/search_results.h"
-#include "directory_scaner/directories.h"
 
 
 namespace sptv {
@@ -16,7 +17,7 @@ namespace sptv {
         spotivar_gtk_view();
 
         void update_entries(search_result *entries) override;
-        void update_folders(directories::directory_content_t *folders) override;
+        void update_folders(directories::directory_content_obj *folders) override;
 
         int run(); // start ui even loop
 

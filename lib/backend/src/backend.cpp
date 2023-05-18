@@ -1,5 +1,5 @@
 #include "spotivar-backend.h"
-#include "../dummy_scaner/user_files.h"
+#include "directory-scanner/user_files.h"
 
 static std::map<std::string, std::string audio::track_info::*> metadata = {
 	{"TITLE", &audio::track_info::title},
@@ -56,14 +56,14 @@ search_result *backend::find_tracks_by_prompt(std::string prompt) {
 			by_track_tags.push_back(track);
 	}
 
-	search_result* result= new search_result(by_track_metadata, by_track_tags);
+	search_result* result = new search_result(by_track_metadata, by_track_tags);
 	return result;
 }
 
-directories::directory_content_t *get_directiory_content_by_root(std::string root) {
+std::vector<directories::directory_content_obj *>& get_directiory_content_by_root(std::string root) {
 
 	directories::directory *dir = new directories::directory(root);
 	directory_scaner::read_directory(root.data(), directory_scaner::LINEAR, dir);
 
-	return &dir->get_content();
+	return dir->get_content();
 }
