@@ -1,18 +1,35 @@
 #include "gtk/spotivar-gtk-view.h"
+#include "glibmm/refptr.h"
 #include "gtk/spotivar-glade-ui.h"
 
 #include "gtkmm.h"
 #include "fmt/format.h"
 #include "gtkmm/application.h"
+#include "gtkmm/liststore.h"
+#include "gtkmm/window.h"
 #include <memory>
 #include "../../search_results.h"
 
 
 namespace sptv {
 
+    class column_model : public Gtk::TreeModel::ColumnRecord {
+    public:
+        column_model() { add(column_name); }
+
+        Gtk::TreeModelColumn<Glib::ustring> column_name;
+    };
+
     struct spotivar_gtk_view::impl {
         Glib::RefPtr<Gtk::Application> app;
-        Gtk::Window *window;
+        std::unique_ptr<Gtk::Window> window;
+
+        std::unique_ptr<Gtk::TreeView> folders;
+        std::unique_ptr<Gtk::TreeView> entries;
+
+        column_model model;
+        Glib::RefPtr<Gtk::ListStore> entries_store_model;
+        Glib::RefPtr<Gtk::ListStore> folders_store_model;
     };
 
     void spotivar_gtk_view::impl_deleter::operator()(impl* impl) const {
@@ -24,6 +41,17 @@ namespace sptv {
     }
 
 
+    template <typename widget_type>
+    static widget_type* load_widget(std::unique_ptr<widget_type> &widget,
+            Glib::RefPtr<Gtk::Builder> builder, const char *name) {
+
+        widget_type *loaded_widget = nullptr;
+        builder->get_widget(name, loaded_widget);
+        widget.reset(loaded_widget);
+
+        return widget.get();
+    }
+
     spotivar_gtk_view::spotivar_gtk_view() {
         
         std::unique_ptr<impl, spotivar_gtk_view::impl_deleter> impl(new spotivar_gtk_view::impl());
@@ -34,19 +62,47 @@ namespace sptv {
         impl_->app->signal_startup().connect([&] {
             auto build = Gtk::Builder::create_from_string(sptv::spotivar_glade_ui);
 
-            build->get_widget<Gtk::Window>("main-window", impl_->window);
-            impl_->window->set_application(impl_->app);
+            Gtk::Window *window = load_widget(impl_->window, build, "main-window");
+            load_widget(impl_->folders, build, "folders");
+            load_widget(impl_->entries, build, "entries");
 
-            impl_->window->show();
+            window->set_application(impl_->app);
+            window->show();
+
+            impl_->folders_store_model = Gtk::ListStore::create(impl_->model);
+            impl_->folders->set_model(impl_->folders_store_model);
+            impl_->folders->set_headers_visible(false);
+            impl_->folders->append_column("Name", impl_->model.column_name);
+
+            impl_->entries_store_model = Gtk::ListStore::create(impl_->model);
+            impl_->entries->set_model(impl_->entries_store_model);
+            impl_->entries->set_headers_visible(false);
+            impl_->entries->append_column("Name", impl_->model.column_name);
+
+            update_entries({ "Hello", "My", "Friend" });
+            update_folders({ "My", "Friend" });
         });
     }
 
+    // TODO: remove duplication
+    // void spotivar_gtk_view::update_entries(std::vector<std::string> entries) {
     void spotivar_gtk_view::update_entries(search_result *entries) {
+        // impl_->entries_store_model->clear();
+        // for (auto &&entry: entries) {
+            // auto row = *(impl_->entries_store_model->append());
+            // row[impl_->model.column_name] = entry;
+        // }
+
         (void) entries;
-        // TODO: ...
     }
 
     void spotivar_gtk_view::update_folders(std::vector<std::string> folders) {
+        impl_->folders_store_model->clear();
+        for (auto &&entry: folders) {
+            auto row = *(impl_->folders_store_model->append());
+            row[impl_->model.column_name] = entry;
+        }
+
         (void) folders;
         // TODO: ...
     }

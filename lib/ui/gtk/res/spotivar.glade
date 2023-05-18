@@ -290,7 +290,7 @@
             <property name="can-focus">True</property>
             <property name="wide-handle">True</property>
             <child>
-              <object class="GtkTreeView">
+              <object class="GtkTreeView" id="folders">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <child internal-child="selection">
@@ -303,7 +303,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkTreeView">
+              <object class="GtkTreeView" id="entries">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <child internal-child="selection">
