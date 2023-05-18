@@ -15,11 +15,11 @@ quick_backend::quick_backend(const std::string host, uint16_t port,
     view_.update_entries(stringified);
 }
 		
-// void quick_backend::on_search_input(std::string updated_prompt) {
-//     // TODO: ...
-// }
+void quick_backend::on_search_input(std::string updated_prompt) {
+    // TODO: ...
+}
 
-// void quick_backend::on_folder_selected(std::string selected_folder) {}
+void quick_backend::on_folder_selected(std::string selected_folder) {}
 
 void quick_backend::on_entry_clicked(int entry_index) {
     fmt::print("You clicked track: {}", tracks_[entry_index].title);
