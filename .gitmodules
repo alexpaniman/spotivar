@@ -4,9 +4,3 @@
 [submodule "lib/axp"]
 	path = lib/axp
 	url = git@github.com:alexpaniman/axp.git
-[submodule "lib/audio_data_decoder"]
-	path = lib/audio_data_decoder
-	url = https://github.com/tsatsulya/audio_data_decoder.git
-[submodule "lib/dummy_scaner"]
-	path = lib/dummy_scaner
-	url = https://github.com/tsatsulya/dummy_scaner
