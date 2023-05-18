@@ -84,27 +84,10 @@ namespace sptv {
 
             impl_->entries->signal_row_activated().connect([&](const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column) {
                 backend_->on_entry_clicked(path.front());
-                // auto iter = impl->entries_store_model->get_iter("");
-
-                // std::string name;
-                // iter->get_value(0, name);
-
-                // fmt::print("Hello\n");
             });
 
-            update_entries({ "Hello", "My", "Friend" });
-            update_folders({ "My", "Friend" });
+            backend_->init();
         });
-
-
-        // impl_->entries->signal_row_activated().connect(sigc::mem_fun(my_fun));
-            // auto iter = impl->entries_store_model->get_iter("");
-
-            // std::string name;
-            // iter->get_value(0, name);
-
-            // fmt::print("{}", name);
-        // }));
     }
 
     // TODO: remove duplication

@@ -19,6 +19,8 @@ namespace sptv {
 		virtual void on_folder_selected(std::string selected_folder) = 0;
 		virtual void on_entry_clicked(int entry_id) = 0;
 
+        virtual void init() = 0;
+
 		virtual ~spotivar_backend() = default;
 	};
 

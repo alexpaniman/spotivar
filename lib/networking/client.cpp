@@ -1,5 +1,4 @@
 #include "client.h"
-#include "flac-reader/FLAC_track_info.h"
 #include "common_include.h"
 #include "axp/exceptions.h"
 #include <stdlib.h>
@@ -173,8 +172,8 @@ std::vector<FLAC_track_info> sptv::spotivar_net_client::get_tracks_list() {
 
     owned_message<msg_type> reply = deq_messages_in.pop_back();
 
-    size_t msg_size      = reply.msg.body.size();
-    size_t num_of_tracks = msg_size / sizeof(FLAC_track_info);
+    size_t num_of_tracks = 0;
+    reply.msg >> num_of_tracks;
 
     std::cout << "List vector size is " << num_of_tracks << "\n";
 

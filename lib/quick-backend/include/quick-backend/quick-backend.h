@@ -14,6 +14,8 @@ public:
     void on_folder_selected(std::string selected_folder) override;
     void on_entry_clicked(int entry_index) override;
 
+    void init() override;
+
 private:
     sptv::spotivar_net_client client_;
     sptv::spotivar_view &view_;

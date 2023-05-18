@@ -5,12 +5,13 @@
 
 // TODO: Why named in caps?
 bool CHECK_NOT_SYSTEM(std::string file_name) {
-    if (!strcmp(file_name.c_str(), ".DS_Store"))
+    if (strcmp(file_name.c_str(), ".DS_Store") == 0)
         return false;
-    else if (!strcmp(file_name.c_str(), "indexed.txt"))
+
+    if (strcmp(file_name.c_str(), "indexed.txt") == 0)
         return false;
-    else         
-        return true;
+
+    return true;
 };
 
 bool CHECK_IF_INDEXED(std::string lib_path) {
@@ -221,21 +222,23 @@ void sptv::spotivar_server::send_track(std::shared_ptr<connection> client, messa
 void sptv::spotivar_server::send_tracks_list(std::shared_ptr<connection> client){
     message<msg_type> track_list;
     track_list.header.id = msg_type::GetList;
+    size_t count = 0;
 
     for (const auto& entry : std::filesystem::directory_iterator(track_lib_path)){
         std::string file_name = entry.path().filename().generic_string();
+        uint64_t hash = atoi(file_name.c_str());
 
         if (CHECK_NOT_SYSTEM(file_name)) {
             FLAC_track_info track = {};
             FLAC_read_track_info(entry.path().c_str(), &track);
-
-            size_t info_size = FLAC_info_size(&track);
-            std::cout << info_size << "\n";
+            track.hash = hash;
 
             track_list << track;
+            count ++;
         }
     }
 
+    track_list << count;
     client->send(track_list);
 };
 

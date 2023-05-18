@@ -8,3 +8,6 @@ target_link_libraries(client PUBLIC ${Boost_LIBRARY_DIRS} axp fmt flac)
 
 target_include_directories(server PUBLIC ${Boost_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(client PUBLIC ${Boost_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_executable(spotivar-server server_test.cpp)
+target_link_libraries(spotivar-server server)
