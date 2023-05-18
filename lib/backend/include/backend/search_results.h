@@ -2,6 +2,7 @@
 
 #include "session.h"
 
+// TODO: name should be more than just "search result"
 class search_result {
 public:
 	search_result(tracklist_t by_track_metadata, tracklist_t by_track_tags):

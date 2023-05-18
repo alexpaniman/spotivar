@@ -1,5 +1,6 @@
 #pragma once
 
+#include "spotivar-backend.h"
 #include "spotivar-view.h"
 
 #include "backend/search_results.h"
@@ -16,8 +17,10 @@ namespace sptv {
     public:
         spotivar_gtk_view();
 
-        void update_entries(search_result *entries) override;
-        void update_folders(directories::directory_content_obj *folders) override;
+        void update_entries(std::vector<std::string> entries) override;
+        void update_folders(std::vector<std::string> folders) override;
+
+        void set_backend(sptv::spotivar_backend &backend) { backend_ = &backend; }
 
         int run(); // start ui even loop
 
@@ -29,6 +32,8 @@ namespace sptv {
 
         // use pimpl idiom to prevent gtk headers from leaking outside:
         std::unique_ptr<impl, impl_deleter> impl_;             
+
+        sptv::spotivar_backend *backend_;
     };
 
 }

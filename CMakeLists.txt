@@ -48,6 +48,9 @@ add_subdirectory(lib/ui)
 add_subdirectory(lib/jsoncpp)
 add_subdirectory(lib/audio-data-decoder)
 add_subdirectory(lib/directory-scanner)
+
+
+add_subdirectory(lib/quick-backend)
 add_subdirectory(lib/backend)
 
 add_subdirectory(lib/flac-reader)

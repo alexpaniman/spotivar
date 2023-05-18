@@ -4,7 +4,11 @@
 // TODO: WTF dependency on backend, shouldn't be
 #include "backend/search_results.h"
 
+#include "fmt/format.h"
+
 #include "gtkmm.h"
+#include "gtkmm/treeviewcolumn.h"
+#include "sigc++/functors/mem_fun.h"
 #include <memory>
 
 
@@ -23,6 +27,7 @@ namespace sptv {
 
         std::unique_ptr<Gtk::TreeView> folders;
         std::unique_ptr<Gtk::TreeView> entries;
+        std::unique_ptr<Gtk::Button> play;
 
         column_model model;
         Glib::RefPtr<Gtk::ListStore> entries_store_model;
@@ -62,6 +67,7 @@ namespace sptv {
             Gtk::Window *window = load_widget(impl_->window, build, "main-window");
             load_widget(impl_->folders, build, "folders");
             load_widget(impl_->entries, build, "entries");
+            load_widget(impl_->play, build, "play");
 
             window->set_application(impl_->app);
             window->show();
@@ -76,35 +82,48 @@ namespace sptv {
             impl_->entries->set_headers_visible(false);
             impl_->entries->append_column("Name", impl_->model.column_name);
 
-            // update_entries({ "Hello", "My", "Friend" });
-            // update_folders({ "My", "Friend" });
+            impl_->entries->signal_row_activated().connect([&](const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column) {
+                backend_->on_entry_clicked(path.front());
+                // auto iter = impl->entries_store_model->get_iter("");
+
+                // std::string name;
+                // iter->get_value(0, name);
+
+                // fmt::print("Hello\n");
+            });
+
+            update_entries({ "Hello", "My", "Friend" });
+            update_folders({ "My", "Friend" });
         });
+
+
+        // impl_->entries->signal_row_activated().connect(sigc::mem_fun(my_fun));
+            // auto iter = impl->entries_store_model->get_iter("");
+
+            // std::string name;
+            // iter->get_value(0, name);
+
+            // fmt::print("{}", name);
+        // }));
     }
 
     // TODO: remove duplication
-    // void spotivar_gtk_view::update_entries(std::vector<std::string> entries) {
-    void spotivar_gtk_view::update_entries(search_result *entries) {
-        // impl_->entries_store_model->clear();
-        // for (auto &&entry: entries) {
-            // auto row = *(impl_->entries_store_model->append());
-            // row[impl_->model.column_name] = entry;
-        // }
-
-        (void) entries;
+    void spotivar_gtk_view::update_entries(std::vector<std::string> entries) {
+        impl_->entries_store_model->clear();
+        for (auto &&entry: entries) {
+            auto row = *(impl_->entries_store_model->append());
+            row[impl_->model.column_name] = entry;
+        }
     }
 
 
-    void spotivar_gtk_view::update_folders(directories::directory_content_obj *folders) {}
-    // void spotivar_gtk_view::update_folders(std::vector<std::string> folders) {
-    //     impl_->folders_store_model->clear();
-    //     for (auto &&entry: folders) {
-    //         auto row = *(impl_->folders_store_model->append());
-    //         row[impl_->model.column_name] = entry;
-    //     }
-
-    //     (void) folders;
-    //     // TODO: ...
-    // }
+    void spotivar_gtk_view::update_folders(std::vector<std::string> folders) {
+        impl_->folders_store_model->clear();
+        for (auto &&entry: folders) {
+            auto row = *(impl_->folders_store_model->append());
+            row[impl_->model.column_name] = entry;
+        }
+    }
 
 
     int spotivar_gtk_view::run() {
